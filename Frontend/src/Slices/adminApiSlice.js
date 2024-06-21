@@ -1,48 +1,63 @@
 import { apiSlice } from './apiSlice';
 
-const USERS_URL = '/api/users';
+const ADMIN_URL = '/api/admin';
 
 
 export const adminApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (data) => ({
-                url: `${USERS_URL}/auth`,
+                url: `${ADMIN_URL}/auth`,
                 method: 'POST',
                 body: data,
             }),
         }),
         logout: builder.mutation({
             query: () => ({
-                url: `${USERS_URL}/logout`,
+                url: `${ADMIN_URL}/logout`,
                 method: 'POST',
             }),
         }),
         fetchUsers: builder.query({
-            query: () => `${USERS_URL}/userlist`,
+            query: () => ({
+                url: `${ADMIN_URL}/userlist`,
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            }),
             transformResponse: (response) => response.users,
             providesTags: ['User'],
         }),
         createUser: builder.mutation({
             query: (newUser) => ({
-                url: `${USERS_URL}/userlist`,
+                url: `${ADMIN_URL}/userlist`,
                 method: 'POST',
                 body: newUser,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+                }
             }),
             invalidatesTags: ['User'],
         }),
-        updateUser: builder.mutation({
+        updateUserAdmin: builder.mutation({
             query: ({ id, data }) => ({
-                url: `${USERS_URL}/userlist/${id}`,
-                method: 'PUT',
+                url: `${ADMIN_URL}/userlist/${id}`,
+                method: 'PATCH',
                 body: data,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+                }
             }),
             invalidatesTags: ['User'],
         }),
         deleteUser: builder.mutation({
             query: (id) => ({
-                url: `${USERS_URL}/userlist/${id}`,
+                url: `${ADMIN_URL}/userlist/${id}`,
                 method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+                }
             }),
             invalidatesTags: ['User'],
         }),
@@ -53,7 +68,7 @@ export const {
     useLoginMutation,
     useLogoutMutation,
     useFetchUsersQuery,
-    useUpdateUserMutation,
+    useUpdateUserAdminMutation,
     useCreateUserMutation,
     useDeleteUserMutation,
 } = adminApiSlice;

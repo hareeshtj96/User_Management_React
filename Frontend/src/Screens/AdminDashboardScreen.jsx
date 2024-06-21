@@ -3,16 +3,16 @@ import { useDispatch } from 'react-redux';
 import { 
   useCreateUserMutation,
   useFetchUsersQuery, 
-  useUpdateUserMutation, 
+  useUpdateUserAdminMutation, 
   useDeleteUserMutation 
 } from '../Slices/adminApiSlice.js';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const AdminDashboardScreen = () => {
-  const { data: users = [], isLoading, error, refetch } = useFetchUsersQuery();
+  const { data: users = [], isLoading,  error, refetch } = useFetchUsersQuery();
   const [createUser] = useCreateUserMutation();
-  const [updateUser] = useUpdateUserMutation();
+  const [updateUser] = useUpdateUserAdminMutation();
   const [deleteUser] = useDeleteUserMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -103,7 +103,9 @@ const AdminDashboardScreen = () => {
         </button>
         {isLoading ? (
           <p>Loading...</p>
-        ) : (
+        ) : error ? (
+          <p>Error fetching users: {fetchError?.data?.message || 'An error occurred'}</p>
+        )  : (
           <table className="min-w-full shadow-2xl" style={{ border: '3px solid black' }}>
             <thead>
               <tr>

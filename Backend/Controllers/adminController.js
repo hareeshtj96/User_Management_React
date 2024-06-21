@@ -90,7 +90,7 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const user = await userModel.findById(req.params.userId)
+        const user = await User.findById(req.params.userId)
         const { name, email } = req.body;
         if (user) {
             user.name = name || user.name;

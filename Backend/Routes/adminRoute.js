@@ -1,5 +1,7 @@
 import express from 'express';
 const router = express.Router();
+import { AdminProtect } from '../Middleware/adminAuth.js';
+
 
 
 
@@ -7,16 +9,17 @@ import {
     authAdmin,
     logoutAdmin,
     userlist,
-    createUser,
     updateUser,
+    createUser,
     deleteUser,
 } from '../Controllers/adminController.js';
+
 
 router.post('/login', authAdmin);
 router.post('/logout', logoutAdmin);
 router.get('/userlist', userlist);
-router.post('/userlist', createUser);
-router.put('/userlist/:userId', updateUser)
-router.delete('/userlist/:userId', deleteUser)
+router.post('/userlist', AdminProtect, createUser);
+router.patch('/userlist/:userId', AdminProtect, updateUser)
+router.delete('/userlist/:userId', AdminProtect, deleteUser)
 
 export default router;

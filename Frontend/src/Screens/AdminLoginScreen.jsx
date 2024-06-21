@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../Components/FormContainer';
 import { useLoginMutation } from '../Slices/adminApiSlice';
@@ -13,6 +13,8 @@ import { toast } from 'react-toastify';
 const AdminLoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -29,18 +31,25 @@ const AdminLoginScreen = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        setLoading(true)
+        setError(null)
         try {
             const res = await loginAdmin({ email, password }).unwrap();
             dispatch(setAdminCredentials(res));
             navigate('/admin/dashboard');
         } catch (err) {
+            setError(err?.data?.message || err.error);
             toast.error(err?.data?.message || err.error);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <FormContainer>
-            <h1>Admin Sign In</h1>
+            <h1 className='text-4xl font-bold mb-4'>Admin Sign In</h1>
+
+            {error && <Alert variant='danger'>{error}</Alert>}
 
             <Form onSubmit={submitHandler}>
                 <Form.Group className="my-2" controlId="email">
@@ -65,13 +74,13 @@ const AdminLoginScreen = () => {
 
                 
 
-                <Button type="submit" variant="primary" className="mt-3">
-                    Sign In
+                <Button type="submit" variant="primary" className="mt-3" disabled={loading}>
+                    {loading? <Spinner as="span" animation='border' size='sm' role='status' aria-hidden='true' /> : 'sign In'}
                 </Button>
 
                 <Row className="py-3">
                     <Col>
-                        Not an admin? <Link to="/">Go back to home</Link>
+                        Not an admin? <Link to="/" className="text-blue-500 underline hover:text-blue-700">Go back to home</Link>
                     </Col>
                 </Row>
             </Form>

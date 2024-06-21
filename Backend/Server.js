@@ -30,7 +30,7 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(cookieParser());
 app.use('/api/users', userRoutes);
-app.use('/api/users', adminRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../Frontend/public/uploads')));
 app.use('/api/upload', uploadRoutes);
